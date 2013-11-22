@@ -3,16 +3,15 @@ var mongo = require('mongodb'),
     Hashids = require('hashids'),
     hashids = new Hashids(salt.get());
 
-var Server = mongo.Server,
-    Db = mongo.Db,
+var db,
     BSON = mongo.BSONPure;
 
-var server = new Server('localhost', 27017, {auto_reconnect: true});
-db = new Db('playlistdb', server);
+var mongoUri = process.env.MONGOLAB_URI || 'mongodb://localhost:27017/playlistdb';
 
-db.open(function(err, db) {
+mongo.MongoClient.connect(mongoUri, function (err, database) {
   if (!err) {
     console.log("Connected to 'playlistdb' database");
+    db = database;
     db.collection('hashids', {strict: true}, function(err, collection) {
       if (err) {
         populateDB();
