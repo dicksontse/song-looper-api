@@ -1,4 +1,7 @@
-var mongo = require('mongodb');
+var mongo = require('mongodb'),
+    salt = require('../salt'),
+    Hashids = require('hashids'),
+    hashids = new Hashids(salt.get());
 
 var Server = mongo.Server,
     Db = mongo.Db,
@@ -10,6 +13,11 @@ db = new Db('playlistdb', server);
 db.open(function(err, db) {
   if (!err) {
     console.log("Connected to 'playlistdb' database");
+    db.collection('hashids', {strict: true}, function(err, collection) {
+      if (err) {
+        populateDB();
+      }
+    });
   }
 });
 
@@ -24,22 +32,36 @@ exports.findAll = function(req, res) {
 exports.findById = function(req, res) {
   var id = req.params.id;
   db.collection('playlists', function(err, collection) {
-    collection.findOne({'_id': new BSON.ObjectID(id)}, function(err, item) {
-      res.send(item);
+    collection.findOne({'hashid': id}, function(err, item) {
+      if (item != null)
+        res.send(item.songs);
+      else
+        res.send("error");
     });
   });
 };
 
 exports.addPlaylist = function(req, res) {
   var playlist = req.body;
-  db.collection('playlists', function(err, collection) {
-    collection.insert(playlist, {safe: true}, function(err, result) {
-      if (err) {
-        res.send({'error': 'An error has occurred - ' + err});
-      }
-      else {
-        res.send(result[0]);
-      }
+  db.collection('hashids', function(err, collection) {
+    collection.find().toArray(function(err, items) {
+      collection.update({'_id': items[0]._id}, { "hashid": items[0].hashid + 1 }, {safe: true}, function(err, result) {
+        if (err) {
+          res.send({'error': 'An error has occurred - ' + err});
+        }
+      });
+
+      playlist.hashid = hashids.encrypt(items[0].hashid);
+      db.collection('playlists', function(err, collection) {
+        collection.insert(playlist, {safe: true}, function(err, result) {
+          if (err) {
+            res.send({'error': 'An error has occurred - ' + err});
+          }
+          else {
+            res.send({ "url": result[0].hashid });
+          }
+        });
+      });
     });
   });
 };
@@ -74,3 +96,11 @@ exports.deletePlaylist = function(req, res) {
   });
 };
 */
+
+var populateDB = function() {
+  var seedHashId = { hashid: 10000000000 };
+
+  db.collection('hashids', function(err, collection) {
+    collection.insert(seedHashId, {safe: true}, function(err, result) {});
+  });
+};
