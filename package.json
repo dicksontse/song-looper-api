@@ -1,0 +1,10 @@
+{
+  "name": "song-looper-api",
+  "description": "Song Looper API",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {
+    "express": "3.x",
+    "mongodb": "*"
+  }
+}
