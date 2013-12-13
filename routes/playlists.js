@@ -83,7 +83,7 @@ exports.updatePlaylist = function(req, res) {
                 res.send({'error': 'An error has occurred - ' + err});
               }
               else {
-                res.send(playlist.songs);
+                res.send({ "url": item.hashid });
               }
             });
           }
