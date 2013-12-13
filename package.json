@@ -6,6 +6,7 @@
   "dependencies": {
     "express": "3.x",
     "mongodb": "*",
-    "hashids": "0.3.2"
+    "hashids": "0.3.2",
+    "bcryptjs": "0.7.10"
   }
 }

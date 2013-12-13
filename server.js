@@ -19,7 +19,7 @@ app.configure(function() {
 app.get('/playlists', playlists.findAll);
 app.get('/playlists/:id', playlists.findById);
 app.post('/playlists', playlists.addPlaylist);
-//app.put('/playlists/:id', playlists.updatePlaylist);
+app.put('/playlists/:id', playlists.updatePlaylist);
 //app.delete('/playlists/:id', playlists.deletePlaylist);
 
 var port = process.env.PORT || 3000;

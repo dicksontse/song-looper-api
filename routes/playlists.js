@@ -1,7 +1,8 @@
 var mongo = require('mongodb'),
     salt = require('../salt'),
     Hashids = require('hashids'),
-    hashids = new Hashids(salt.get());
+    hashids = new Hashids(salt.get()),
+    bcrypt = require('bcryptjs');
 
 var db,
     BSON = mongo.BSONPure;
@@ -51,6 +52,10 @@ exports.addPlaylist = function(req, res) {
       });
 
       playlist.hashid = hashids.encrypt(items[0].hashid);
+      if (playlist.password != "") {
+        playlist.password = bcrypt.hashSync(playlist.password);
+      }
+
       db.collection('playlists', function(err, collection) {
         collection.insert(playlist, {safe: true}, function(err, result) {
           if (err) {
@@ -65,22 +70,36 @@ exports.addPlaylist = function(req, res) {
   });
 };
 
-/*
 exports.updatePlaylist = function(req, res) {
   var id = req.params.id;
   var playlist = req.body;
   db.collection('playlists', function(err, collection) {
-    collection.update({'_id': new BSON.ObjectID(id)}, playlist, {safe: true}, function(err, result) {
-      if (err) {
-        res.send({'error': 'An error has occurred - ' + err});
+    collection.findOne({'hashid': id}, function(err, item) {
+      if (item != null) {
+        if (item.password != undefined && item.password != "") {
+          if (bcrypt.compareSync(playlist.password, item.password)) {
+            collection.update({'_id': item._id}, {$set: {songs: playlist.songs}}, {safe: true}, function(err, result) {
+              if (err) {
+                res.send({'error': 'An error has occurred - ' + err});
+              }
+              else {
+                res.send(playlist.songs);
+              }
+            });
+          }
+          else
+            res.send("error");
+        }
+        else
+          res.send("error");
       }
-      else {
-        res.send(playlist);
-      }
+      else
+        res.send("error");
     });
   });
 };
 
+/*
 exports.deletePlaylist = function(req, res) {
   var id = req.params.id;
   db.collection('playlists', function(err, collection) {
