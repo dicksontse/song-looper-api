@@ -1,6 +1,6 @@
 var mongo = require('mongodb'),
     Hashids = require('hashids'),
-    hashids = new Hashids(process.env.SALT || require('../salt').get()),
+    hashids = new Hashids(process.env.SALT || "dev salt"),
     bcrypt = require('bcryptjs');
 
 var db,
