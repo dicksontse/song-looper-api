@@ -21,6 +21,7 @@ mongo.MongoClient.connect(mongoUri, function (err, database) {
   }
 });
 
+/*
 exports.findAll = function(req, res) {
   db.collection('playlists', function(err, collection) {
     collection.find().toArray(function(err, items) {
@@ -28,6 +29,7 @@ exports.findAll = function(req, res) {
     });
   });
 };
+*/
 
 exports.findById = function(req, res) {
   var id = req.params.id;

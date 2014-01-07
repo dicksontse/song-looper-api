@@ -16,7 +16,7 @@ app.configure(function() {
   app.use(allowCrossDomain);
 });
 
-app.get('/playlists', playlists.findAll);
+//app.get('/playlists', playlists.findAll);
 app.get('/playlists/:id', playlists.findById);
 app.post('/playlists', playlists.addPlaylist);
 app.put('/playlists/:id', playlists.updatePlaylist);
