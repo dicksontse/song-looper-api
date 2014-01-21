@@ -35,8 +35,9 @@ exports.findById = function(req, res) {
   var id = req.params.id;
   db.collection('playlists', function(err, collection) {
     collection.findOne({'hashid': id}, function(err, item) {
-      if (item != null)
-        res.send(item.songs);
+      if (item != null) {
+        res.send({ "title": item.title, "songs": item.songs });
+      }
       else
         res.send("error");
     });
