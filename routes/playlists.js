@@ -45,7 +45,11 @@ exports.findById = function(req, res) {
 };
 
 exports.addPlaylist = function(req, res) {
-  var playlist = req.body;
+  var playlist = {};
+  playlist.title = req.body.title;
+  playlist.songs = req.body.songs;
+  playlist.password = req.body.password;
+
   db.collection('hashids', function(err, collection) {
     collection.find().toArray(function(err, items) {
       collection.update({'_id': items[0]._id}, { "hashid": items[0].hashid + 1 }, {safe: true}, function(err, result) {
@@ -76,6 +80,7 @@ exports.addPlaylist = function(req, res) {
 exports.updatePlaylist = function(req, res) {
   var id = req.params.id;
   var playlist = req.body;
+  
   db.collection('playlists', function(err, collection) {
     collection.findOne({'hashid': id}, function(err, item) {
       if (item != null) {
