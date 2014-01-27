@@ -54,7 +54,7 @@ exports.addPlaylist = function(req, res) {
     collection.find().toArray(function(err, items) {
       collection.update({'_id': items[0]._id}, { "hashid": items[0].hashid + 1 }, {safe: true}, function(err, result) {
         if (err) {
-          res.send({'error': 'An error has occurred - ' + err});
+          res.send("error");
         }
       });
 
@@ -66,7 +66,7 @@ exports.addPlaylist = function(req, res) {
       db.collection('playlists', function(err, collection) {
         collection.insert(playlist, {safe: true}, function(err, result) {
           if (err) {
-            res.send({'error': 'An error has occurred - ' + err});
+            res.send("error");
           }
           else {
             res.send({ "url": result[0].hashid });
@@ -88,7 +88,7 @@ exports.updatePlaylist = function(req, res) {
           if (bcrypt.compareSync(playlist.password, item.password)) {
             collection.update({'_id': item._id}, {$set: {songs: playlist.songs}}, {safe: true}, function(err, result) {
               if (err) {
-                res.send({'error': 'An error has occurred - ' + err});
+                res.send("error");
               }
               else {
                 res.send({ "url": item.hashid });
