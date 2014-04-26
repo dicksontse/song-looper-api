@@ -21,15 +21,13 @@ mongo.MongoClient.connect(mongoUri, function (err, database) {
   }
 });
 
-/*
 exports.findAll = function(req, res) {
   db.collection('playlists', function(err, collection) {
-    collection.find().toArray(function(err, items) {
+    collection.find({}, {'_id': 0, 'title': 1, 'hashid': 1}).toArray(function(err, items) {
       res.send(items);
     });
   });
 };
-*/
 
 exports.findById = function(req, res) {
   var id = req.params.id;
