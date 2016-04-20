@@ -1,4 +1,5 @@
 var express = require('express'),
+    bodyParser = require('body-parser'),
     playlists = require('./routes/playlists');
 
 var app = express();
@@ -13,11 +14,10 @@ var allowCrossDomain = function(req, res, next) {
   next();
 }
 
-app.configure(function() {
-  app.use(express.logger('dev'));
-  app.use(express.bodyParser());
-  app.use(allowCrossDomain);
-});
+app.use(express.logger('dev'));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(allowCrossDomain);
 
 app.get('/playlists', playlists.findAll);
 app.get('/playlists/:id', playlists.findById);
