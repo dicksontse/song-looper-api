@@ -67,7 +67,7 @@ exports.addPlaylist = function(req, res) {
             res.send("error");
           }
           else {
-            res.send({ "url": result[0].hashid });
+            res.send({ "url": result["ops"][0].hashid });
           }
         });
       });
